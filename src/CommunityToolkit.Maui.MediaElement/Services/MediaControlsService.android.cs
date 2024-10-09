@@ -43,25 +43,26 @@ class MediaControlsService : Service
 
 	public override IBinder? OnBind(Intent? intent) => null;
 
-	public override StartCommandResult OnStartCommand([NotNull] Intent? intent, StartCommandFlags flags, int startId)
+	public override StartCommandResult OnStartCommand( Intent? intent, StartCommandFlags flags, int startId)
 	{
-		ArgumentNullException.ThrowIfNull(intent);
-
-		if (!string.IsNullOrEmpty(intent.Action) && receiveUpdates is not null)
+		if (!string.IsNullOrEmpty(intent?.Action) && receiveUpdates is not null)
 		{
 			BroadcastUpdate(ACTION_UPDATE_PLAYER, intent.Action);
 		}
 
-		StartForegroundService(intent).AsTask().ContinueWith(t =>
+		if (intent is not null)
 		{
-			if (t.Exception is not null)
+			StartForegroundService(intent).AsTask().ContinueWith(t =>
 			{
-				foreach (var exception in t.Exception.InnerExceptions)
+				if (t.Exception is not null)
 				{
-					System.Diagnostics.Trace.WriteLine($"[error] {exception}, {exception.Message}");
+					foreach (var exception in t.Exception.InnerExceptions)
+					{
+						System.Diagnostics.Trace.WriteLine($"[error] {exception}, {exception.Message}");
+					}
 				}
-			}
-		}, TaskContinuationOptions.OnlyOnFaulted);
+			}, TaskContinuationOptions.OnlyOnFaulted);
+		}
 
 		return StartCommandResult.Sticky;
 	}
