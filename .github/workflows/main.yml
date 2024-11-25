@@ -11,7 +11,7 @@ on:
       types: [opened, edited, synchronize, closed]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     name: Update NuGet package
     steps:
 
@@ -24,7 +24,7 @@ jobs:
           source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
         env:
           NUGET_AUTH_TOKEN: ${{github.token}}        
-      - name: Install WASM Tools Workload
+      - name: Install Maui Tools Workload
         run: dotnet workload install maui android ios maui-android maui-ios
       - name: Build solution and generate NuGet package
         run: |  
