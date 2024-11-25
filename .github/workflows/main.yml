@@ -11,7 +11,7 @@ on:
       types: [opened, edited, synchronize, closed]
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     name: Update NuGet package
     steps:
 
@@ -21,11 +21,11 @@ jobs:
       - name: Setup .NET Core @ Latest
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
           source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
         env:
           NUGET_AUTH_TOKEN: ${{github.token}}        
-
+      - name: Install WASM Tools Workload
+        run: dotnet workload install maui android ios maui-android maui-ios
       - name: Build solution and generate NuGet package
         run: |  
           cd src/CommunityToolkit.Maui.MediaElement/
