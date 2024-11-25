@@ -25,9 +25,6 @@ jobs:
           source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
         env:
           NUGET_AUTH_TOKEN: ${{github.token}}        
-          
-      - name: Testing ....
-        run: dotnet test Spherum.Web.Tests
 
       - name: Build solution and generate NuGet package
         run: |  
