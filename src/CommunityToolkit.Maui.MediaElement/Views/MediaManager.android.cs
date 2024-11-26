@@ -169,10 +169,6 @@ public partial class MediaManager : Java.Lang.Object, IPlayer.IListener
 
 		currentState = MediaElement.CurrentState;
 
-		BroadcastUpdate(newState is MediaElementState.Playing
-			? MediaControlsService.ACTION_PLAY
-			: MediaControlsService.ACTION_PAUSE);
-
 	}
 
 	/// <summary>
@@ -325,7 +321,6 @@ public partial class MediaManager : Java.Lang.Object, IPlayer.IListener
 
 		Player.Prepare();
 		Player.Play();
-		BroadcastUpdate(MediaControlsService.ACTION_PLAY);
 	}
 
 	protected virtual partial void PlatformPause()
@@ -336,7 +331,6 @@ public partial class MediaManager : Java.Lang.Object, IPlayer.IListener
 		}
 
 		Player.Pause();
-		BroadcastUpdate(MediaControlsService.ACTION_PAUSE);
 	}
 
 	protected virtual async partial Task PlatformSeek(TimeSpan position, CancellationToken token)
@@ -607,8 +601,7 @@ public partial class MediaManager : Java.Lang.Object, IPlayer.IListener
 
 	static void StopService()
 	{
-		var serviceIntent = new Intent(Platform.AppContext, typeof(MediaControlsService));
-		Android.App.Application.Context.StopService(serviceIntent);
+
 	}
 
 	static async Task CheckAndRequestForegroundPermission(CancellationToken cancellationToken = default)
@@ -637,7 +630,6 @@ public partial class MediaManager : Java.Lang.Object, IPlayer.IListener
 		mediaSessionConnector.SetPlayer(Player);
 
 		uiUpdateReceiver ??= new UIUpdateReceiver(Player);
-		LocalBroadcastManager.GetInstance(Platform.AppContext).RegisterReceiver(uiUpdateReceiver, new IntentFilter(MediaControlsService.ACTION_UPDATE_PLAYER));
 
 		ArgumentNullException.ThrowIfNull(mediaSessionConnector);
 		ArgumentNullException.ThrowIfNull(Platform.CurrentActivity);
@@ -669,34 +661,10 @@ public partial class MediaManager : Java.Lang.Object, IPlayer.IListener
 		PlayerView.DefaultArtwork = new BitmapDrawable(resources, bitmap);
 
 		var mediaMetadata = new MediaMetadataCompat.Builder();
-		mediaMetadata.PutString(MediaMetadataCompat.MetadataKeyArtist, MediaElement.MetadataArtist);
-		mediaMetadata.PutString(MediaMetadataCompat.MetadataKeyTitle, MediaElement.MetadataTitle);
-		mediaMetadata.PutBitmap(MediaMetadataCompat.MetadataKeyAlbumArt, bitmap);
-		mediaMetadata.PutLong(MediaMetadataCompat.MetadataKeyDuration, Player?.Duration ?? 0);
 		mediaMetadata.Build();
 
 		mediaSession?.SetMetadata(mediaMetadata.Build());
-		var intent = new Intent(Android.App.Application.Context, typeof(MediaControlsService));
 
-		if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-		{
-			intent.PutExtra("title", MediaElement.MetadataTitle);
-			intent.PutExtra("artist", MediaElement.MetadataArtist);
-			intent.PutExtra("albumArtUri", MediaElement.MetadataArtworkUrl);
-			intent.PutExtra("position", ((long)MediaElement.Position.TotalSeconds));
-			intent.PutExtra("currentTime", SystemClock.ElapsedRealtime());
-			intent.PutExtra("duration", ((long)MediaElement.Duration.TotalSeconds));
-		}
-
-		intent.PutExtra("token", mediaSession?.SessionToken);
-		if (OperatingSystem.IsAndroidVersionAtLeast(26))
-		{
-			Android.App.Application.Context.StartForegroundService(intent);
-		}
-		else
-		{
-			Android.App.Application.Context.StartService(intent);
-		}
 	}
 
 	void BroadcastUpdate(string action)
@@ -705,9 +673,6 @@ public partial class MediaManager : Java.Lang.Object, IPlayer.IListener
 		{
 			return;
 		}
-		Intent intent = new(MediaControlsService.ACTION_UPDATE_UI);
-		intent.PutExtra("ACTION", action);
-		LocalBroadcastManager.GetInstance(Platform.AppContext).SendBroadcast(intent);
 	}
 
 	public void OnVideoSizeChanged(VideoSize? videoSize)
@@ -753,7 +718,7 @@ public partial class MediaManager : Java.Lang.Object, IPlayer.IListener
 	#endregion
 
 	/// <summary>
-	/// A <see cref="BroadcastReceiver"/> that listens for updates from the <see cref="MediaControlsService"/>.
+	/// A <see cref="BroadcastReceiver"/> that listens for updates from the/>.
 	/// </summary>
 	sealed class UIUpdateReceiver(IExoPlayer player) : BroadcastReceiver
 	{
@@ -763,27 +728,6 @@ public partial class MediaManager : Java.Lang.Object, IPlayer.IListener
 			ArgumentNullException.ThrowIfNull(intent.Action);
 			ArgumentNullException.ThrowIfNull(player);
 
-			if (intent.Action is MediaControlsService.ACTION_UPDATE_PLAYER)
-			{
-				var action = intent.GetStringExtra("ACTION") ?? string.Empty;
-				switch (action)
-				{
-					case MediaControlsService.ACTION_PLAY:
-						player.Play();
-						break;
-					case MediaControlsService.ACTION_PAUSE:
-						player.Pause();
-						break;
-					case MediaControlsService.ACTION_FASTFORWARD:
-						player.SeekTo(player.CurrentPosition + 30_000);
-						player.Play();
-						break;
-					case MediaControlsService.ACTION_REWIND:
-						player.SeekTo(player.CurrentPosition - 10_000);
-						player.Play();
-						break;
-				}
-			}
 		}
 	}
 }

@@ -20,8 +20,8 @@
 
   <PropertyGroup>
     <GitInfoReportImportance>high</GitInfoReportImportance>
-    <PackageId>CommunityToolkit.Maui.MediaElement</PackageId>
-    <Summary>MediaElement is a view for playing video and audio in your .NET MAUI app.</Summary>
+    <PackageId>Spherum.Maui.MediaElement</PackageId>
+    <Summary>Fork CommunityToolkit MediaElement is a view for playing video and audio in your .NET MAUI app.</Summary>
     <Authors>Microsoft</Authors>
     <Owners>Microsoft</Owners>
     <NeutralLanguage>en</NeutralLanguage>
@@ -49,13 +49,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\build\nuget.png" PackagePath="icon.png" Pack="true"/>
     <None Include="ReadMe.txt" pack="true" PackagePath="."/>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\CommunityToolkit.Maui.MediaElement.Analyzers\bin\$(Configuration)\netstandard2.0\CommunityToolkit.Maui.MediaElement.Analyzers.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
-    <None Include="..\CommunityToolkit.Maui.MediaElement.Analyzers.CodeFixes\bin\$(Configuration)\netstandard2.0\CommunityToolkit.Maui.MediaElement.Analyzers.CodeFixes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.Contains('-android'))">
