@@ -267,36 +267,36 @@ jobs:
           script: 'dotnet build -c Release $(PathToCommunityToolkitSourceGeneratorsInternalCsproj)'
 
       - task: CmdLine@2
+        displayName: 'Build CommunityToolkit.Maui.Core'
+        inputs:
+          script: 'dotnet build $(PathToCommunityToolkitCoreCsproj) -c Release -p:PackageVersion=$(NugetPackageVersion) -p:Version=$(NugetPackageVersion)'
+
+      - task: CmdLine@2
+        displayName: 'Build CommunityToolkit.Maui'
+        inputs:
+          script: 'dotnet build $(PathToCommunityToolkitCsproj) -c Release -p:PackageVersion=$(NugetPackageVersion) -p:Version=$(NugetPackageVersion)'
+
+      - task: CmdLine@2
+        displayName: 'Build CommunityToolkit.Maui.Camera'
+        inputs:
+          script: 'dotnet build $(PathToCommunityToolkitCameraCsproj) -c Release -p:PackageVersion=$(NugetPackageVersionCamera) -p:Version=$(NugetPackageVersion)'
+
+      - task: CmdLine@2
+        displayName: 'Build CommunityToolkit.Maui.MediaElement'
+        inputs:
+          script: 'dotnet build $(PathToCommunityToolkitMediaElementCsproj) -c Release -p:PackageVersion=$(NugetPackageVersionMediaElement) -p:Version=$(NugetPackageVersion)'
+
+      - task: CmdLine@2
+        displayName: 'Build CommunityToolkit.Maui.Maps'
+        inputs:
+          script: 'dotnet build $(PathToCommunityToolkitMapsCsproj) -c Release -p:PackageVersion=$(NugetPackageVersionMaps) -p:Version=$(NugetPackageVersion)'
+
+      - task: CmdLine@2
         displayName: 'Run CommunityToolkit.Maui.Analyzers.UnitTests'
         env:
           VSTEST_TESTHOST_SHUTDOWN_TIMEOUT: 1100 # Fixes "The active test run was aborted. Reason: Test host process crashed" https://dev.azure.com/dotnet/CommunityToolkit/_build/results?buildId=109660&view=logs&j=3f96dcf5-6e1e-5485-3200-c557d5216be3&t=12286b69-c788-55db-0a8c-ef899858fbe6&l=76 (source: https://github.com/microsoft/vstest/issues/2952#issuecomment-2234253765): $(sauceUsername)
         inputs:
           script: 'dotnet test $(PathToCommunityToolkitAnalyzersUnitTestCsproj) -c Release'
-
-      - task: CmdLine@2
-        displayName: 'Build CommunityToolkit.Maui.Core'
-        inputs:
-          script: 'dotnet build $(PathToCommunityToolkitCoreCsproj) -c Release -p:PackageVersion=$(NugetPackageVersion)'
-
-      - task: CmdLine@2
-        displayName: 'Build CommunityToolkit.Maui'
-        inputs:
-          script: 'dotnet build $(PathToCommunityToolkitCsproj) -c Release -p:PackageVersion=$(NugetPackageVersion)'
-
-      - task: CmdLine@2
-        displayName: 'Build CommunityToolkit.Maui.Camera'
-        inputs:
-          script: 'dotnet build $(PathToCommunityToolkitCameraCsproj) -c Release -p:PackageVersion=$(NugetPackageVersionCamera)'
-
-      - task: CmdLine@2
-        displayName: 'Build CommunityToolkit.Maui.MediaElement'
-        inputs:
-          script: 'dotnet build $(PathToCommunityToolkitMediaElementCsproj) -c Release -p:PackageVersion=$(NugetPackageVersionMediaElement)'
-
-      - task: CmdLine@2
-        displayName: 'Build CommunityToolkit.Maui.Maps'
-        inputs:
-          script: 'dotnet build $(PathToCommunityToolkitMapsCsproj) -c Release -p:PackageVersion=$(NugetPackageVersionMaps)'
 
       - task: CmdLine@2
         displayName: 'Run CommunityToolkit.Maui.UnitTests'
@@ -324,27 +324,27 @@ jobs:
       - task: CmdLine@2
         displayName: 'Pack CommunityToolkit.Maui.Core NuGet'
         inputs:
-          script: 'dotnet pack $(PathToCommunityToolkitCoreCsproj) -c Release -p:PackageVersion=$(NugetPackageVersion)'
+          script: 'dotnet pack $(PathToCommunityToolkitCoreCsproj) -c Release -p:PackageVersion=$(NugetPackageVersion) -p:Version=$(NugetPackageVersion)'
 
       - task: CmdLine@2
         displayName: 'Pack CommunityToolkit.Maui NuGet'
         inputs:
-          script: 'dotnet pack $(PathToCommunityToolkitCsproj) -c Release -p:PackageVersion=$(NugetPackageVersion)'
+          script: 'dotnet pack $(PathToCommunityToolkitCsproj) -c Release -p:PackageVersion=$(NugetPackageVersion) -p:Version=$(NugetPackageVersion)'
 
       - task: CmdLine@2
         displayName: 'Pack CommunityToolkit.Maui.Camera NuGet'
         inputs:
-          script: 'dotnet pack $(PathToCommunityToolkitCameraCsproj) -c Release -p:PackageVersion=$(NugetPackageVersionCamera)'
+          script: 'dotnet pack $(PathToCommunityToolkitCameraCsproj) -c Release -p:PackageVersion=$(NugetPackageVersionCamera) -p:Version=$(NugetPackageVersion)'
 
       - task: CmdLine@2
         displayName: 'Pack CommunityToolkit.Maui.MediaElement NuGet'
         inputs:
-          script: 'dotnet pack $(PathToCommunityToolkitMediaElementCsproj) -c Release -p:PackageVersion=$(NugetPackageVersionMediaElement)'
+          script: 'dotnet pack $(PathToCommunityToolkitMediaElementCsproj) -c Release -p:PackageVersion=$(NugetPackageVersionMediaElement) -p:Version=$(NugetPackageVersion)'
 
       - task: CmdLine@2
         displayName: 'Pack CommunityToolkit.Maui.Maps NuGet'
         inputs:
-          script: 'dotnet pack $(PathToCommunityToolkitMapsCsproj) -c Release -p:PackageVersion=$(NugetPackageVersionMaps)'
+          script: 'dotnet pack $(PathToCommunityToolkitMapsCsproj) -c Release -p:PackageVersion=$(NugetPackageVersionMaps) -p:Version=$(NugetPackageVersion)'
 
       # check vulnerabilities
       - powershell: |
