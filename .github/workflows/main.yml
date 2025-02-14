@@ -11,7 +11,7 @@ on:
       types: [opened, edited, synchronize, closed]
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: macos-latest
     name: Update NuGet package
     steps:
 
