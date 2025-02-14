@@ -29,7 +29,9 @@ jobs:
         run: dotnet workload install maui android maui-android
       - name: Build solution and generate NuGet package
         run: |  
-          cd src/CommunityToolkit.Maui.MediaElement/
-          dotnet pack -c Release -o out
+          cd src
+          dotnet build -c Release CommunityToolkit.Maui.sln
+          cd ../src/CommunityToolkit.Maui.MediaElement/
+          dotnet pack -c Release -o out --no-build
       - name: Push generated package to GitHub registry
         run: dotnet nuget push ./src/CommunityToolkit.Maui.MediaElement/out/*.nupkg --skip-duplicate --no-symbols true
