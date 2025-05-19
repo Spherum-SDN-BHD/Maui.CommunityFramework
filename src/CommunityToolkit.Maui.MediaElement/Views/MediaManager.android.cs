@@ -131,7 +131,14 @@ public partial class MediaManager : Java.Lang.Object, IPlayerListener
 	[MemberNotNull(nameof(Player), nameof(PlayerView), nameof(session))]
 	public (PlatformMediaElement platformView, PlayerView PlayerView) CreatePlatformView(AndroidViewType androidViewType)
 	{
-		Player = new ExoPlayerBuilder(MauiContext.Context).Build() ?? throw new InvalidOperationException("Player cannot be null");
+		var renderersFactory = new DefaultRenderersFactory(MauiContext.Context).SetEnableDecoderFallback(true);
+		var builder = new ExoPlayerBuilder(MauiContext.Context);
+		builder.SetRenderersFactory(renderersFactory);
+		
+		Player = 
+			builder
+			.Build() ?? throw new InvalidOperationException("Player cannot be null");
+
 		Player.AddListener(this);
 
 		if (androidViewType is AndroidViewType.SurfaceView)
